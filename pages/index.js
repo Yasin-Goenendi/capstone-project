@@ -7,13 +7,12 @@ function MoviesList() {
 
   useEffect(() => {
     async function fetchMovies() {
-      const apiKey = process.env.API_KEY;
+      const apiKey = `9b1dc3e910cce9037e3a21dbbd912753`;
       const response = await fetch(
         `https://api.themoviedb.org/3/movie/popular?api_key=9b1dc3e910cce9037e3a21dbbd912753&language=en-US&page=1`
       );
       const data = await response.json();
       setMovies(data.results);
-      console.log(data);
     }
     fetchMovies();
   }, []);
