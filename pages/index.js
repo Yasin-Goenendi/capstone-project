@@ -2,64 +2,45 @@ import styled from "styled-components";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-
-
-
-
-export default function Home() {
-
-  const [data, setData] = useState();
-
-
-  const url = 'https://imdb8.p.rapidapi.com/auto-complete?q=marvel';
+function MoviesList() {
+  const [movies, setMovies] = useState([]);
 
   useEffect(() => {
-    const options = {
-      method: 'GET',
-      headers: {
-        'X-RapidAPI-Key': '467e3c9b58mshc5c2a10984fd07bp15ceebjsn338c8a8d0154',
-        'X-RapidAPI-Host': 'imdb8.p.rapidapi.com'
-      }
-    };
-
-fetch(url, options)
-.then(response => response.json())
-.then(response => {
-  console.log(response);
-  setData(response);
-})
-.catch(err => {
-  console.error(err);
-})
-
-  })
+    async function fetchMovies() {
+      const apiKey = process.env.API_KEY;
+      const response = await fetch(
+        `https://api.themoviedb.org/3/movie/popular?api_key=9b1dc3e910cce9037e3a21dbbd912753&language=en-US&page=1`
+      );
+      const data = await response.json();
+      setMovies(data.results);
+      console.log(data);
+    }
+    fetchMovies();
+  }, []);
 
   return (
     <main>
       <Heading>Movies</Heading>
-      <h1>Popular Films</h1>
-      {
-        data && data.map((id) => {
-          return(
-            <div key={id.id}>
-            <h2>{id.name}</h2>
-            {id.description}
-            <Image src={id.imgSrc[0].img} width="50" height="50" alt={id.name} />
-            
-
-            </div>
-          )
-        })
-      }
-
+      <h1>popular films</h1>
+      <div className="movies">
+        {movies.map((movie) => (
+          <div key={movie.id} className="movie">
+            <h2>{movie.title}</h2>
+            <img
+              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              width="300"
+              height="300"
+              alt={movie.title}
+            />
+          </div>
+        ))}
+      </div>
     </main>
   );
 }
 
-const Heading = styled.h1`
-text-align: center;
-`;
+export default MoviesList;
 
-const h1 = styled.h2`
-text-align: center;
+const Heading = styled.h1`
+  text-align: center;
 `;
