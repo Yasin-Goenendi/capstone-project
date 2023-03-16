@@ -14,7 +14,6 @@ function MoviesList() {
       );
       const data = await response.json();
       setMovies(data.results);
-      console.log(data);
     }
     fetchMovies();
   }, []);
