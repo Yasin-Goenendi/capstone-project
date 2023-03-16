@@ -1,9 +1,12 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import MovieDetails from "./MovieDetails";
 
 function MoviesList() {
   const [movies, setMovies] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   useEffect(() => {
     async function fetchMovies() {
@@ -18,6 +21,10 @@ function MoviesList() {
     fetchMovies();
   }, []);
 
+  function handleMovieClick(movie) {
+    setSelectedMovie(movie);
+  }
+
   return (
     <main>
       <Heading>Movies</Heading>
@@ -25,17 +32,20 @@ function MoviesList() {
       <div className="movies">
         {movies?.length > 0 &&
           movies.map((movie) => (
-            <div key={movie.id}>
-              <h2>{movie.title}</h2>
-              <img
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                width="300"
-                height="300"
-                alt={movie.title}
-              />
-            </div>
+            <Link href={`/movies/${movie.id}`} key={movie.id}>
+              <div onClick={() => handleMovieClick(movie)}>
+                <h2>{movie.title}</h2>
+                <img
+                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                  width="300"
+                  height="300"
+                  alt={movie.title}
+                />
+              </div>
+            </Link>
           ))}
       </div>
+      {selectedMovie && <MovieDetails movie={selectedMovie} />}
     </main>
   );
 }
