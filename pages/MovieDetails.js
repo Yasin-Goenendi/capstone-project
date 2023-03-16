@@ -45,7 +45,7 @@ function MovieDetails() {
       <p>Release date: {movie.release_date}</p>
       <p>Rating: {movie.vote_average}</p>
 
-      <h3>Cast:</h3>
+      <h3>CAST:</h3>
       <ul>
         {cast.map((actor) => (
           <li key={actor.id}>{actor.name}</li>
