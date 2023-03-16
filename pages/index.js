@@ -1,4 +1,3 @@
-// require("dotenv").config();
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import Image from "next/image";
