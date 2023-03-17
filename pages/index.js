@@ -28,7 +28,7 @@ function MoviesList() {
   return (
     <main>
       <Heading>Movies</Heading>
-      <h1>popular films</h1>
+      <h1>Popular Films</h1>
       <div className="movies">
         {movies?.length > 0 &&
           movies.map((movie) => (
