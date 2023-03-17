@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import MovieDetails from "./MovieDetails";
 
-function MoviesList() {
+export default function MoviesList() {
   const [movies, setMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
 
@@ -17,6 +17,7 @@ function MoviesList() {
       );
       const data = await response.json();
       setMovies(data.results);
+      console.log(data);
     }
     fetchMovies();
   }, []);
@@ -24,7 +25,7 @@ function MoviesList() {
   function handleMovieClick(movie) {
     setSelectedMovie(movie);
   }
-
+  console.log(selectedMovie);
   return (
     <main>
       <Heading>Movies</Heading>
@@ -49,8 +50,6 @@ function MoviesList() {
     </main>
   );
 }
-
-export default MoviesList;
 
 const Heading = styled.h1`
   text-align: center;

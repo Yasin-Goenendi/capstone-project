@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
-function MovieDetails() {
+export default function MovieDetails({ SelectedMovie }) {
   const router = useRouter();
   const { id } = router.query;
   const [movie, setMovie] = useState(null);
@@ -12,13 +12,13 @@ function MovieDetails() {
       const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
       const movieResponse = await fetch(
-        `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US`
+        `https://api.themoviedb.org/3/movie/${movie.id}?api_key=${apiKey}&language=en-US`
       );
       const movieData = await movieResponse.json();
       setMovie(movieData);
 
       const castResponse = await fetch(
-        `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${apiKey}`
+        `https://api.themoviedb.org/3/movie/${movie.id}/credits?api_key=${apiKey}`
       );
       const castData = await castResponse.json();
       setCast(castData.cast);
@@ -56,5 +56,3 @@ function MovieDetails() {
     </div>
   );
 }
-
-export default MovieDetails;

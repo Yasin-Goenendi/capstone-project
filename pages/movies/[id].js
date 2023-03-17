@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
-function MovieDetails() {
+export default function MovieDetails2() {
   const router = useRouter();
   const { id } = router.query;
   const [movie, setMovie] = useState(null);
@@ -56,5 +56,3 @@ function MovieDetails() {
     </div>
   );
 }
-
-export default MovieDetails;
