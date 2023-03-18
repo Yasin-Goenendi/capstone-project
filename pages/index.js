@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import MovieDetails from "./MovieDetails";
+import MovieDetails from "./movies/[id]";
 
 export default function MoviesList() {
   const [movies, setMovies] = useState([]);

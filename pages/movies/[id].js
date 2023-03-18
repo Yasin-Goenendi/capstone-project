@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
-export default function MovieDetails2() {
+export default function MovieDetails() {
   const router = useRouter();
   const { id } = router.query;
   const [movie, setMovie] = useState(null);
