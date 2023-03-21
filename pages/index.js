@@ -2,9 +2,8 @@ import styled from "styled-components";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import MovieDetails from "./movies/[id]";
 
-export default function MoviesList() {
+function MoviesList() {
   const [movies, setMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
 
@@ -25,15 +24,16 @@ export default function MoviesList() {
   function handleMovieClick(movie) {
     setSelectedMovie(movie);
   }
-  console.log(selectedMovie);
+
   return (
     <main>
-      <Heading>Movies</Heading>
-      <h1>Popular Films</h1>
+      <Heading suppressHydrationWarning>Movies</Heading>
+
+      <h1>Popular films</h1>
       <div className="movies">
         {movies?.length > 0 &&
           movies.map((movie) => (
-            <Link href={`/movies/${movie.id}`} key={movie.id}>
+            <Link href={`/movie/${movie.id}`} key={movie.id}>
               <div onClick={() => handleMovieClick(movie)}>
                 <h2>{movie.title}</h2>
                 <img
@@ -46,7 +46,6 @@ export default function MoviesList() {
             </Link>
           ))}
       </div>
-      {selectedMovie && <MovieDetails movie={selectedMovie} />}
     </main>
   );
 }
@@ -54,3 +53,5 @@ export default function MoviesList() {
 const Heading = styled.h1`
   text-align: center;
 `;
+
+export default MoviesList;
