@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 function MoviesList() {
   const [movies, setMovies] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   useEffect(() => {
     async function fetchMovies() {
@@ -14,34 +16,42 @@ function MoviesList() {
       );
       const data = await response.json();
       setMovies(data.results);
+      console.log(data);
     }
     fetchMovies();
   }, []);
 
+  function handleMovieClick(movie) {
+    setSelectedMovie(movie);
+  }
+
   return (
     <main>
-      <Heading>Movies</Heading>
-      <h1>popular films</h1>
+      <Heading suppressHydrationWarning>Movies</Heading>
+
+      <h1>Popular films</h1>
       <div className="movies">
         {movies?.length > 0 &&
           movies.map((movie) => (
-            <div key={movie.id}>
-              <h2>{movie.title}</h2>
-              <img
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                width="300"
-                height="300"
-                alt={movie.title}
-              />
-            </div>
+            <Link href={`/movie/${movie.id}`} key={movie.id}>
+              <div onClick={() => handleMovieClick(movie)}>
+                <h2>{movie.title}</h2>
+                <img
+                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                  width="300"
+                  height="300"
+                  alt={movie.title}
+                />
+              </div>
+            </Link>
           ))}
       </div>
     </main>
   );
 }
 
-export default MoviesList;
-
 const Heading = styled.h1`
   text-align: center;
 `;
+
+export default MoviesList;
