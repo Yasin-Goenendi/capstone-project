@@ -72,7 +72,7 @@ export default function MoviesList() {
         />
       </Head>
       <MainContainer>
-        <Heading>Films</Heading>
+        <Heading>Movie4U</Heading>
         <SubHeading>Popular films</SubHeading>
         <Container>
           <MoviesWrapper>
