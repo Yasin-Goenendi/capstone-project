@@ -2,6 +2,28 @@ import Link from "next/link";
 import styled from "styled-components";
 import { FaHome, FaSearch, FaHeart } from "react-icons/fa";
 
+export default function Navbar() {
+  return (
+    <Nav>
+      <Link href="/">
+        <button>
+          <FaHome />
+        </button>
+      </Link>
+      <Link href="/MoviesSearchPage">
+        <button>
+          <FaSearch />
+        </button>
+      </Link>
+      <Link href="/favorites">
+        <button>
+          <FaHeart />
+        </button>
+      </Link>
+    </Nav>
+  );
+}
+
 const Nav = styled.nav`
   display: flex;
   justify-content: space-between;
@@ -24,25 +46,3 @@ const Nav = styled.nav`
     cursor: pointer;
   }
 `;
-
-export default function Navbar() {
-  return (
-    <Nav>
-      <Link href="/">
-        <button>
-          <FaHome />
-        </button>
-      </Link>
-      <Link href="/MoviesSearchPage">
-        <button>
-          <FaSearch />
-        </button>
-      </Link>
-      <Link href="/favorites">
-        <button>
-          <FaHeart />
-        </button>
-      </Link>
-    </Nav>
-  );
-}

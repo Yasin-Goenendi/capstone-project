@@ -1,3 +1,4 @@
+import MoviesSearchPage from "./MoviesSearchPage";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -12,13 +13,15 @@ export default function MoviesList() {
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedFavorites = localStorage.getItem("favorites");
-      if (savedFavorites) {
-        setFavorites(JSON.parse(savedFavorites));
-      }
+    const savedFavorites = localStorage.getItem("favorites");
+    if (savedFavorites) {
+      setFavorites(JSON.parse(savedFavorites));
     }
   }, []);
+
+  function addToFavorites(movie) {
+    setFavorites((prevFavorites) => [...prevFavorites, movie]);
+  }
 
   function toggleFavorite(movie) {
     const currentFavorites =
