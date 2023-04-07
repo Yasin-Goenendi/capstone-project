@@ -77,24 +77,30 @@ export default function MoviesList() {
         <Container>
           <MoviesWrapper>
             {movies?.length > 0 &&
-              movies.map((movie) => {
+              movies.map((movie, index) => {
                 const isFavorite = favorites.some((fav) => fav.id === movie.id);
+
                 return (
-                  <Link href={`/movie/${movie.id}`} key={movie.id}>
+                  <Link href={`/movie/${movie.id}`} key={movie.id} passHref>
                     <MovieCard>
                       <MovieCardContent>
-                        <img
+                        <Image
                           src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                          alt={movie.title}
-                          style={{
-                            width: "100px",
-                            height: "150px",
-                            objectFit: "cover",
-                          }}
+                          alt={`${movie.title} movie poster`}
+                          width={100}
+                          height={150}
+                          fit="cover"
+                          style={{ width: "auto", height: "auto" }}
                         />
                         <MovieInfo>
                           <MovieTitle>{movie.title}</MovieTitle>
                           <FavoriteButton
+                            aria-label={
+                              isFavorite
+                                ? "Remove from favorites"
+                                : "Add to favorites"
+                            }
+                            aria-pressed={isFavorite}
                             isFavorite={isFavorite}
                             onClick={(e) => {
                               e.preventDefault();
