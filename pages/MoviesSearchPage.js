@@ -21,11 +21,11 @@ export default function MoviesSearchPage() {
       }
     }
   }, []);
-  
+
   function toggleFavorite(movie) {
     const currentFavorites =
       JSON.parse(localStorage.getItem("favorites")) || [];
-  
+
     if (currentFavorites.some((fav) => fav.id === movie.id)) {
       const updatedFavorites = currentFavorites.filter(
         (fav) => fav.id !== movie.id
@@ -85,53 +85,51 @@ export default function MoviesSearchPage() {
       </Form>
 
       {results.length > 0 && (
-  <ResultsContainer>
-    {results.map((movie) => {
-      const isFavorite = favorites.some((fav) => fav.id === movie.id);
-      return (
-        <Link
-          href={`/movie/${movie.id}`}
-          key={movie.id}
-          scroll={false}
-          replace
-        >
-          <ResultCard>
-            <ResultImage
-              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-              alt={movie.title}
-            />
-            <TitleContainer>
-              <h2>{movie.title}</h2>
-              <FavoriteButton
-                aria-label={
-                  isFavorite
-                    ? "Remove from favorites"
-                    : "Add to favorites"
-                }
-                aria-pressed={isFavorite}
-                isFavorite={isFavorite}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleFavorite(movie);
-                }}
+        <ResultsContainer>
+          {results.map((movie) => {
+            const isFavorite = favorites.some((fav) => fav.id === movie.id);
+            return (
+              <Link
+                href={`/movie/${movie.id}`}
+                key={movie.id}
+                scroll={false}
+                replace
               >
-                <FaHeart />
-              </FavoriteButton>
-            </TitleContainer>
-          </ResultCard>
-        </Link>
-      );
-    })}
-  </ResultsContainer>
-)}
-
+                <ResultCard>
+                  <ResultImage
+                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                    alt={movie.title}
+                  />
+                  <TitleContainer>
+                    <h2>{movie.title}</h2>
+                    <FavoriteButton
+                      aria-label={
+                        isFavorite
+                          ? "Remove from favorites"
+                          : "Add to favorites"
+                      }
+                      aria-pressed={isFavorite}
+                      isFavorite={isFavorite}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleFavorite(movie);
+                      }}
+                    >
+                      <FaHeart />
+                    </FavoriteButton>
+                  </TitleContainer>
+                </ResultCard>
+              </Link>
+            );
+          })}
+        </ResultsContainer>
+      )}
 
       <Navbar />
     </Container>
   );
 }
-
 
 const BackButton = styled.button`
   position: absolute;
@@ -199,7 +197,6 @@ const ResultsContainer = styled.div`
   padding: 1rem;
   border-top: 1px solid #ddd;
 `;
-
 
 const ResultCard = styled.div`
   display: flex;
