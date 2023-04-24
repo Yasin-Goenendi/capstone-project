@@ -91,8 +91,6 @@ export default function Movie() {
   }
 
   const opts = {
-    height: "390",
-    width: "640",
     playerVars: {
       autoplay: 0,
     },
@@ -100,10 +98,10 @@ export default function Movie() {
 
   return (
     <Container>
-      <div>
-        <BackButton onClick={() => router.back()}>
-          <FontAwesomeIcon icon={faArrowLeft} />
-        </BackButton>
+      <BackButton onClick={() => router.back()}>
+        <FontAwesomeIcon icon={faArrowLeft} />
+      </BackButton>
+      <ContentWrapper>
         <Title>{movie.title}</Title>
         <Overview>{movie.overview}</Overview>
         <ReleaseDate>{movie.release_date}</ReleaseDate>
@@ -115,11 +113,6 @@ export default function Movie() {
             alt={movie.title}
           />
         </ImageContainer>
-
-        <Heading>Trailer:</Heading>
-        <TrailerContainer>
-          <YouTube videoId={trailer.key} opts={opts} />
-        </TrailerContainer>
 
         <Heading>Rating:</Heading>
         <StarContainer>
@@ -142,11 +135,23 @@ export default function Movie() {
               </li>
             ))}
         </CastList>
-      </div>
+
+        <Heading>Trailer:</Heading>
+        <TrailerContainer>
+          <ResponsiveYouTube videoId={trailer.key} opts={opts} />
+        </TrailerContainer>
+      </ContentWrapper>
       <Navbar />
     </Container>
   );
 }
+
+const ContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+`;
 
 const Container = styled.div`
   max-width: 800px;
@@ -155,10 +160,14 @@ const Container = styled.div`
   padding-bottom: 60px;
   color: #34495e;
   font-family: "Roboto", sans-serif;
+  font-size: 18px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
+
 const BackButton = styled.button`
   position: absolute;
   top: 20px;
@@ -168,6 +177,10 @@ const BackButton = styled.button`
   font-size: 1.5rem;
   cursor: pointer;
   color: #34495e;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 
   &:hover {
     color: #2c3e50;
@@ -183,7 +196,7 @@ const Title = styled.h1`
 `;
 
 const Overview = styled.p`
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   line-height: 1.5;
   margin-bottom: 1rem;
   text-align: justify;
@@ -230,6 +243,14 @@ const CastList = styled.ul`
     text-align: center;
     list-style-type: none;
   }
+`;
+
+const ResponsiveYouTube = styled(YouTube)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 `;
 
 const TrailerWrapper = styled.div`
