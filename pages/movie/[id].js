@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faStar } from "@fortawesome/free-solid-svg-icons";
 import YouTube from "react-youtube";
 import Navbar from "../components/Navbar";
 
@@ -13,6 +13,13 @@ export default function Movie() {
   const router = useRouter();
   const { id } = router.query;
   const [favorites, setFavorites] = useState([]);
+  const [rating, setRating] = useState(() => {
+    if (typeof window !== "undefined") {
+      const storedRating = window.localStorage.getItem(`rating-${id}`);
+      return storedRating ? Number(storedRating) : 0;
+    }
+    return 0;
+  });
 
   function goBack() {
     if (typeof window !== "undefined") {
@@ -26,6 +33,13 @@ export default function Movie() {
 
   function removeFromFavorites(movieId) {
     setFavorites(favorites.filter((movie) => movie.id !== movieId));
+  }
+
+  function updateRating(value) {
+    setRating(value);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(`rating-${id}`, value);
+    }
   }
 
   useEffect(() => {
@@ -77,8 +91,6 @@ export default function Movie() {
   }
 
   const opts = {
-    height: "300",
-    width: "300",
     playerVars: {
       autoplay: 0,
     },
@@ -86,22 +98,33 @@ export default function Movie() {
 
   return (
     <Container>
-      <div>
-        <BackButton onClick={() => router.back()}>
-          <FontAwesomeIcon icon={faArrowLeft} />
-        </BackButton>
+      <BackButton onClick={() => router.back()}>
+        <FontAwesomeIcon icon={faArrowLeft} />
+      </BackButton>
+      <ContentWrapper>
         <Title>{movie.title}</Title>
         <Overview>{movie.overview}</Overview>
         <ReleaseDate>{movie.release_date}</ReleaseDate>
-        <Img
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-          width="300"
-          height="300"
-          alt={movie.title}
-        />
+        <ImageContainer>
+          <Img
+            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+            width="100%"
+            height="auto"
+            alt={movie.title}
+          />
+        </ImageContainer>
 
-        <Heading>Trailer:</Heading>
-        <YouTube videoId={trailer.key} opts={opts} />
+        <Heading>Rating:</Heading>
+        <StarContainer>
+          {[1, 2, 3, 4, 5].map((value) => (
+            <Star
+              key={value}
+              icon={faStar}
+              className={value <= rating ? "active" : ""}
+              onClick={() => updateRating(value)}
+            />
+          ))}
+        </StarContainer>
 
         <Heading>Cast:</Heading>
         <CastList>
@@ -112,11 +135,23 @@ export default function Movie() {
               </li>
             ))}
         </CastList>
-      </div>
+
+        <Heading>Trailer:</Heading>
+        <TrailerContainer>
+          <ResponsiveYouTube videoId={trailer.key} opts={opts} />
+        </TrailerContainer>
+      </ContentWrapper>
       <Navbar />
     </Container>
   );
 }
+
+const ContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+`;
 
 const Container = styled.div`
   max-width: 800px;
@@ -125,6 +160,12 @@ const Container = styled.div`
   padding-bottom: 60px;
   color: #34495e;
   font-family: "Roboto", sans-serif;
+  font-size: 18px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const BackButton = styled.button`
@@ -136,6 +177,10 @@ const BackButton = styled.button`
   font-size: 1.5rem;
   cursor: pointer;
   color: #34495e;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 
   &:hover {
     color: #2c3e50;
@@ -147,17 +192,20 @@ const Title = styled.h1`
   font-weight: bold;
   color: #34495e;
   margin-bottom: 1rem;
+  text-align: center;
 `;
 
 const Overview = styled.p`
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   line-height: 1.5;
   margin-bottom: 1rem;
+  text-align: justify;
 `;
 
 const ReleaseDate = styled.p`
   font-size: 1rem;
   margin-bottom: 1rem;
+  text-align: center;
 `;
 
 const Img = styled.img`
@@ -165,6 +213,12 @@ const Img = styled.img`
   margin-bottom: 1rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
 `;
 
 const Heading = styled.h2`
@@ -172,12 +226,14 @@ const Heading = styled.h2`
   font-weight: bold;
   color: #34495e;
   margin-bottom: 1rem;
+  text-align: center;
 `;
 
 const CastList = styled.ul`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 1rem;
+  padding-inline-start: 0;
 
   li {
     background-color: #f0f0f0;
@@ -185,41 +241,83 @@ const CastList = styled.ul`
     border-radius: 5px;
     padding: 1rem;
     text-align: center;
-
-    img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin-bottom: 0.5rem;
-    }
-
-    h3 {
-      font-size: 1.1rem;
-      margin-bottom: 0.25rem;
-      font-weight: bold;
-      color: #34495e;
-    }
-
-    p {
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
-      color: #2c3e50;
-    }
+    list-style-type: none;
   }
+`;
+
+const ResponsiveYouTube = styled(YouTube)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 `;
 
 const TrailerWrapper = styled.div`
   position: relative;
   padding-bottom: 56.25%;
   margin-bottom: 1rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 `;
 
-const Trailer = styled(YouTube)`
+const ImageContainer = styled.div`
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 1rem;
+  display: grid;
+  place-items: center;
+
+  @media (max-width: 600px) {
+    max-width: 300px;
+  }
+`;
+
+const TrailerContainer = styled.div`
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 1000px;
+  padding-bottom: 56.25%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+
+  @media (max-width: 600px) {
+    max-width: 100%;
+    padding-bottom: 56.25%;
+  }
+`;
+
+const CenteredContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+`;
+
+const ResponsiveTrailer = styled(YouTube)`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  border-radius: 5px;
+`;
+
+const StarContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const Star = styled(FontAwesomeIcon)`
+  color: #cccccc;
+  cursor: pointer;
+  margin: 0 5px;
+
+  &.active {
+    color: #ffd700;
+  }
+
+  &:hover {
+    color: #ffd700;
+  }
 `;

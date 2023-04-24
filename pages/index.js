@@ -65,12 +65,6 @@ export default function MoviesList() {
 
   return (
     <>
-      <Head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap"
-          rel="stylesheet"
-        />
-      </Head>
       <MainContainer>
         <Heading>Movie4U</Heading>
         <SubHeading>Popular films</SubHeading>
@@ -91,6 +85,7 @@ export default function MoviesList() {
                           height={150}
                           fit="cover"
                           style={{ width: "auto", height: "auto" }}
+                          priority
                         />
                         <MovieInfo>
                           <MovieTitle>{movie.title}</MovieTitle>
@@ -154,6 +149,10 @@ const Container = styled.div`
   margin: 0 auto;
   padding-top: 5rem;
   padding-bottom: 60px;
+
+  @media (min-width: 768px) {
+    max-width: 80%;
+  }
 `;
 
 const Heading = styled.h1`
@@ -183,7 +182,7 @@ const SearchButton = styled.button`
 
 const MoviesWrapper = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   grid-gap: 1rem;
   margin-bottom: 60px;
   position: sticky;

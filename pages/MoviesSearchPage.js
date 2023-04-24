@@ -5,11 +5,39 @@ import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "./components/Navbar";
+import { FaHeart } from "react-icons/fa";
 
 export default function MoviesSearchPage() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const router = useRouter();
+  const [favorites, setFavorites] = useState([]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedFavorites = localStorage.getItem("favorites");
+      if (savedFavorites) {
+        setFavorites(JSON.parse(savedFavorites));
+      }
+    }
+  }, []);
+
+  function toggleFavorite(movie) {
+    const currentFavorites =
+      JSON.parse(localStorage.getItem("favorites")) || [];
+
+    if (currentFavorites.some((fav) => fav.id === movie.id)) {
+      const updatedFavorites = currentFavorites.filter(
+        (fav) => fav.id !== movie.id
+      );
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      setFavorites(updatedFavorites);
+    } else {
+      const updatedFavorites = [...currentFavorites, movie];
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      setFavorites(updatedFavorites);
+    }
+  }
 
   useEffect(() => {
     const lastSearch = sessionStorage.getItem("lastSearch");
@@ -58,28 +86,51 @@ export default function MoviesSearchPage() {
 
       {results.length > 0 && (
         <ResultsContainer>
-          {results.map((movie) => (
-            <Link
-              href={`/movie/${movie.id}`}
-              key={movie.id}
-              scroll={false}
-              replace
-            >
-              <ResultCard>
-                <ResultImage
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                  alt={movie.title}
-                />
-                <h2>{movie.title}</h2>
-              </ResultCard>
-            </Link>
-          ))}
+          {results.map((movie) => {
+            const isFavorite = favorites.some((fav) => fav.id === movie.id);
+            return (
+              <Link
+                href={`/movie/${movie.id}`}
+                key={movie.id}
+                scroll={false}
+                replace
+              >
+                <ResultCard>
+                  <ResultImage
+                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                    alt={movie.title}
+                  />
+                  <TitleContainer>
+                    <h2>{movie.title}</h2>
+                    <FavoriteButton
+                      aria-label={
+                        isFavorite
+                          ? "Remove from favorites"
+                          : "Add to favorites"
+                      }
+                      aria-pressed={isFavorite}
+                      isFavorite={isFavorite}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleFavorite(movie);
+                      }}
+                    >
+                      <FaHeart />
+                    </FavoriteButton>
+                  </TitleContainer>
+                </ResultCard>
+              </Link>
+            );
+          })}
         </ResultsContainer>
       )}
+
       <Navbar />
     </Container>
   );
 }
+
 const BackButton = styled.button`
   position: absolute;
   top: 20px;
@@ -140,7 +191,7 @@ const Button = styled.button`
 
 const ResultsContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   grid-gap: 1rem;
   background: linear-gradient(to bottom, #ff8a80, #e53935);
   padding: 1rem;
@@ -158,6 +209,8 @@ const ResultCard = styled.div`
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: all 0.2s ease;
+  position: relative;
+  height: 100%;
 
   &:hover {
     transform: translateY(-5px);
@@ -176,4 +229,28 @@ const Title = styled.h2`
   text-align: center;
   font-size: 1.2rem;
   margin: 0;
+`;
+
+const FavoriteButton = styled.button`
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 1.5rem;
+  padding: 0;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  color: ${({ isFavorite }) => (isFavorite ? "#f50057" : "#777")};
+
+  &:hover {
+    color: ${({ isFavorite }) => (isFavorite ? "#c51162" : "#777")};
+  }
+`;
+
+const TitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 0.5rem;
 `;
